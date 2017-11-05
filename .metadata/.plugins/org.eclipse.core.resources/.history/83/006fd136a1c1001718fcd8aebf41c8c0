@@ -1,0 +1,17 @@
+package client;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.net.Socket;
+	
+public class Client {
+	FileInputStream fileInputStream;
+	DataInputStream netInputStream;
+	DataOutputStream netOutputStream;
+	Socket socket;
+	
+	void query(String message, String ip, int port) {
+		
+	}
+}

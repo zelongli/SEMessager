@@ -1,0 +1,33 @@
+package client;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.net.Socket;
+	
+public class Client {
+	FileInputStream fileInputStream;
+	DataInputStream netInputStream;
+	DataOutputStream netOutputStream;
+	Socket socket;
+	int fileLength;
+	byte[] buffer = new byte[1024];
+	byte[] readLen = new byte[10];
+	byte[] readResult = new byte[128];
+	int len;
+	int result_cout = 0;
+	void query(String message, String ip, int port) {
+		byte[] messageData;
+		try{
+			socket = new Socket(ip, port);
+			netInputStream = new DataInputStream(socket.getInputStream());
+			netOutputStream = new DataOutputStream(socket.getOutputStream());
+			netOutputStream.write(message.getBytes("UTF-8"));
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();		
+		}
+		
+	}
+}

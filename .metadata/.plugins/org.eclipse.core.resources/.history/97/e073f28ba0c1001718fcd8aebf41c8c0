@@ -1,0 +1,8 @@
+package client;
+
+
+public class Client {
+	void query(String message, String ip, int port) {
+		
+	}
+}
