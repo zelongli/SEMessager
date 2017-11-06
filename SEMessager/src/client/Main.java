@@ -3,6 +3,6 @@ package client;
 public class Main {
 	public static void main(String[] args) {
 		Client client = new Client();
-		client.query("MMP", "localhost", 6666);
+		client.query("MM", "localhost", 6666);
 	}
 }

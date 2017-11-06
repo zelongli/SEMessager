@@ -68,16 +68,31 @@ void* reply(void* arg)
 	}
 
 	message[numbytes] = '\0';
-	unsigned char result =1;
+	unsigned char *result =1;
 	for(int i =0 ; i< 4 ; ++i){
 //		printf("got server%d,client%d \n",hashbyte[i],message[i]);
 		if(hashbyte[i] != message[i]){
-			result = 0;
+			*result = 0;
 		}
 	}
-	unsigned char resulttosend[1024];
+
+//	unsigned char reply[MAX_MESSAGELEN];
+	if(result){
+		char reply[1];
+		memset(reply,1,1);
+		printf("send result  %d\n", reply[0]);
+		// sprintf(reply,result,1);
+		send(sockfd,reply,1,0);
+	}else{
+		char reply[1];
+		memset(reply,0,1);
+		printf("send result  %d\n", reply[0]);
+		// sprintf(reply,result,1);
+		send(sockfd,reply,1,0);
+	}
+//	unsigned char resulttosend[1024];
 //	int sendlen = sprintf(resulttosend,(char *)&result, send)
-	printf("Signature received client %d\n",result);
+//	printf("Signature received client %d\n",result);
 //	send(sockfd,result,1,0);
 }
 

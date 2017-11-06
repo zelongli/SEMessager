@@ -13,7 +13,7 @@ public class Client {
 	Socket socket;
 	int fileLength;
 	byte[] buffer = new byte[1024];
-	byte[] readLen = new byte[10];
+	byte[] readLen = new byte[1];
 	byte[] readResult = new byte[128];
 	int len;
 	int result_cout = 0;
@@ -37,7 +37,7 @@ public class Client {
 	}
 	
 	void query(String message, String ip, int port) {
-		byte[] messageData;
+//		byte[] messageData;
 		byte[] key = {(byte)192,(byte)168,(byte)1,(byte)1};
 		try{
 			socket = new Socket(ip, port);
@@ -46,12 +46,18 @@ public class Client {
 			netOutputStream.write(message.getBytes("UTF-8"));
 			
 			int hashValue = uglyhash(message.getBytes());
-			System.out.println("get hash "+ hashValue);
+//			System.out.println("get hash "+ hashValue);
 			netOutputStream.write(uglyEncrpt(hashValue,key));
 			
-//			int result = netInputStream.read();
-//			System.out.println(result);
+			netInputStream.read(readLen,0,1);
+			if(readLen[0] == (byte)1) {
+				System.out.println("True");
+			}else {
+				System.out.println("False");
+			}
 			
+			netInputStream.close();
+			netOutputStream.close();
 		}catch(Exception e){
 			e.printStackTrace();		
 		}

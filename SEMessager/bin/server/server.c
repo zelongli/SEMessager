@@ -27,9 +27,8 @@ void get_ip_address(unsigned long address, char*ip)
 
 void* reply(void* arg)
 {
-	char message[MAX_MESSAGELEN];
+	unsigned char message[MAX_MESSAGELEN];
 	client_arg* args = (client_arg*)arg;
-	printf("Message from client nothing");
 	int sockfd = args->client_sockfd;
 	int numbytes;
 	if((numbytes = recv(sockfd,message, MAX_MESSAGELEN,0))==-1){
@@ -38,32 +37,63 @@ void* reply(void* arg)
 	}
 
 	message[numbytes] = '\0';
-	printf("Message from client %s\n",message);
+	printf("Message from client %s\n", message);
 
-	// long hash =0;
+	long hash =0;
 
-	// for(int i = 0; i< numbytes; ++i){
-	// 	hash+=message[i];
-	// }
+	for(int i = 0; i< numbytes; ++i){
+		hash+=message[i];
+	}
+//	printf("hashbalue %d\n",hash);
+	unsigned char hashbyte[4];
+	hashbyte[0] = (hash >> 24) & 0xFF;
+	hashbyte[1] = (hash >> 16) & 0xFF;
+	hashbyte[2] = (hash >> 8) & 0xFF;
+	hashbyte[3] = hash & 0xFF;
 
-	// unsigned char bytes[4];
+	unsigned char key[4];
 
-	// bytes[0] = (hash >> 24) & 0xFF;
-	// bytes[1] = (hash >> 16) & 0xFF;
-	// bytes[2] = (hash >> 8) & 0xFF;
-	// bytes[3] = hash & 0xFF;
+	key[0] = 192;
+	key[1] = 168;
+	key[2] = 1;
+	key[3] = 1;
 
-	// for(int i = 0; i< 4; ++i){
-	// 	bytes[i]
-	// }
+	for(int i = 0; i< 4; ++i){
+		hashbyte[i] ^= key[i];
+	}
 
-	// if((numbytes = recv(sockfd,message, MAX_MESSAGELEN,0))==-1){
-	// 	perror("recv error");
-	// 	exit(1);
-	// }
+	if((numbytes = recv(sockfd,message, MAX_MESSAGELEN,0))==-1){
+		perror("recv error");
+		exit(1);
+	}
 
-	// message[numbytes] = '\0';
-	// printf("Signature received client %s\n",message);
+	message[numbytes] = '\0';
+	unsigned char *result =1;
+	for(int i =0 ; i< 4 ; ++i){
+//		printf("got server%d,client%d \n",hashbyte[i],message[i]);
+		if(hashbyte[i] != message[i]){
+			*result = 0;
+		}
+	}
+
+//	unsigned char reply[MAX_MESSAGELEN];
+	if(result){
+		char reply[1];
+		memset(reply,1,1);
+		printf("send result  %d\n", reply[0]);
+		// sprintf(reply,result,1);
+		send(sockfd,reply,1,0);
+	}else{
+		char reply[1];
+		memset(reply,0,1);
+		printf("send result  %d\n", reply[0]);
+		// sprintf(reply,result,1);
+		send(sockfd,reply,1,0);
+	}
+//	unsigned char resulttosend[1024];
+//	int sendlen = sprintf(resulttosend,(char *)&result, send)
+//	printf("Signature received client %d\n",result);
+//	send(sockfd,result,1,0);
 }
 
 int main()
@@ -74,7 +104,7 @@ int main()
 	int result;
 
 	server_sockfd = socket(AF_INET,SOCK_STREAM,0);
-	printf("im listening \n");
+//	printf("im listening \n");
 	server_address.sin_family=AF_INET;
 	server_address.sin_addr.s_addr=htonl(INADDR_ANY);
 	server_address.sin_port=htons(6666);
